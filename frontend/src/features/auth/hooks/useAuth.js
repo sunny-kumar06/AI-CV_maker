@@ -1,56 +1,91 @@
-import { useContext } from 'react';
-import { AuthContext } from '../auth.context';
-import { login, register, logout } from '../services/auth.api';
+// import { useContext } from 'react';
+// import { AuthContext } from '../auth.context';
+// import { login, register, logout } from '../services/auth.api';
+
+// export const useAuth = () => {
+//     const context = useContext(AuthContext);
+//     const { user, loading, setUser, setLoading } = context;
+
+//     const handleLogin = async ({ email, password }) => {
+//         setLoading(true);
+//         try {
+//             const response = await login({ email, password });
+//             setUser(response.user);
+//         }
+//         catch (error) {
+//             console.error("Login failed:", error);
+//             // Optionally, you can set an error state here to display an error message to the user
+//         }
+//         finally {
+//             setLoading(false);
+//         }
+//     }
+
+//     const handleRegister = async ({ username, email, password }) => {
+//         setLoading(true);
+//         try {
+//             const response = await register({ username, email, password });
+//             setUser(response.user);
+//         }
+//         catch (error) {
+//             console.error("Register failed:", error);
+//             // Optionally, you can set an error state here to display an error message to the user
+//         }
+//         finally {
+//             setLoading(false);
+//         }
+//     }
+
+
+import { loginUser, registerUser, logout } from "../services/auth.api";
+import { useAuth as useAuthContext } from "../auth.context";
 
 export const useAuth = () => {
-    const context = useContext(AuthContext);
-    const { user, loading, setUser, setLoading } = context;
+    const { user, setUser, loading, setLoading } = useAuthContext();
 
-    const handleLogin = async ({ email, password }) => {
-        setLoading(true);
+    // 🔥 LOGIN FIX
+    const handleLogin = async (formData) => {
         try {
-            const response = await login({ email, password });
-            setUser(response.user);
-        }
-        catch (error) {
-            console.error("Login failed:", error);
-            // Optionally, you can set an error state here to display an error message to the user
-        }
-        finally {
+            setLoading(true);
+
+            const data = await loginUser(formData);
+
+            console.log("LOGIN RESPONSE:", data); // debug
+
+            setUser(data.user); // ✅ MOST IMPORTANT
+
+            return data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        } finally {
             setLoading(false);
         }
-    }
+    };
 
-    const handleRegister = async ({ username, email, password }) => {
-        setLoading(true);
+    // REGISTER
+    const handleRegister = async (formData) => {
         try {
-            const response = await register({ username, email, password });
-            setUser(response.user);
-        }
-        catch (error) {
-            console.error("Register failed:", error);
-            // Optionally, you can set an error state here to display an error message to the user
-        }
-        finally {
+            setLoading(true);
+
+            const data = await registerUser(formData);
+
+            setUser(data.user);
+
+            return data;
+        } catch (error) {
+            console.error(error);
+            return null;
+        } finally {
             setLoading(false);
         }
-    }
+    };
 
-    // const handleLogout = async () => {
-    //    try {
-    //     const data = await getMe()
-    //     setUser(data.user);
-    //    }catch (error){} finally {
-    //     setLoading(false);
-    //    }
-    //    getAndsetUser()
-    // }
-
+    // LOGOUT
     const handleLogout = async () => {
         try {
-            await logout(); // backend API call (logout route)
-
-            setUser(null); // user remove
+            await logout();
+            setUser(null);
         } catch (error) {
             console.error(error);
         } finally {
@@ -58,7 +93,5 @@ export const useAuth = () => {
         }
     };
 
-
     return { user, loading, handleLogin, handleRegister, handleLogout };
-
 };
