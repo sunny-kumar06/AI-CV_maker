@@ -30,7 +30,7 @@ authrouter.post("/login", controller.loginUserController)
  * @description This route is used to logout a user. It clears the token cookie and sends a success response.
  * @access public   
  */
-authrouter.get("/logout", controller.logoutUserController)
+authrouter.post("/logout", controller.logoutUserController)
 
 
 /**
