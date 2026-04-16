@@ -1,28 +1,58 @@
+// const express = require('express');
+// const cookieParser = require("cookie-parser")
+// const cors = require("cors")
+
+// const app = express()
+
+
+// app.use(express.json())
+// app.use(cookieParser())
+// app.use(cors({
+//     origin: "*",
+//     credentials: true
+// }))
+
+// //all routes will be here
+// const authRouter = require("./routes/auth.routes")
+// const interviewRouter = require("./routes/interview.routes")
+
+
+
+
+
+
+
+// //use routes
+// app.use("/api/auth", authRouter)
+// app.use("/api/interview", interviewRouter)
+// module.exports = app;  
+
+
 const express = require('express');
-const cookieParser = require("cookie-parser")
-const cors = require("cors")
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
-const app = express()
+const app = express();
 
-
-app.use(express.json())
-app.use(cookieParser())
+// 🔥 VERY IMPORTANT (PUT AT TOP)
 app.use(cors({
-    origin: "*",
-    credentials: true
-}))
+    origin: "https://ai-cv-maker-three.vercel.app",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
-//all routes will be here
-const authRouter = require("./routes/auth.routes")
-const interviewRouter = require("./routes/interview.routes")
+// 🔥 handle preflight manually
+app.options("*", cors());
 
+app.use(express.json());
+app.use(cookieParser());
 
+// routes
+const authRouter = require("./routes/auth.routes");
+const interviewRouter = require("./routes/interview.routes");
 
+app.use("/api/auth", authRouter);
+app.use("/api/interview", interviewRouter);
 
-
-
-
-//use routes
-app.use("/api/auth", authRouter)
-app.use("/api/interview", interviewRouter)
-module.exports = app;  
+module.exports = app;

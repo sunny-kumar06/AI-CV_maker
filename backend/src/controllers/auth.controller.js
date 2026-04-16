@@ -41,9 +41,15 @@ async function registerUserController(req, res) {
         { id: user._id, username: user.username },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
-    )
+    );
 
-    res.cookie("token", token)
+    // 🔥 FIXED COOKIE
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,        // ⚠️ required for Vercel
+        sameSite: "None",    // ⚠️ required for cross-origin
+        maxAge: 24 * 60 * 60 * 1000
+    });
 
     return res.status(201).json({
         message: "User registered successfully",
@@ -52,7 +58,7 @@ async function registerUserController(req, res) {
             username: user.username,
             email: user.email
         }
-    })
+    });
 }
 
 /**
@@ -78,8 +84,16 @@ async function loginUserController(req, res) {
         { id: user._id, username: user.username },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
-    )
-    res.cookie("token", token)
+    );
+
+    // 🔥 FIXED COOKIE
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,        // ⚠️ required for Vercel (HTTPS)
+        sameSite: "None",    // ⚠️ required for cross-origin
+        maxAge: 24 * 60 * 60 * 1000 // optional (1 day)
+    });
+
     return res.status(200).json({
         message: "User logged in successfully",
         user: {
@@ -87,7 +101,7 @@ async function loginUserController(req, res) {
             username: user.username,
             email: user.email
         }
-    })
+    });
 
 }
 
