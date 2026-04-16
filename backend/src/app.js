@@ -8,7 +8,7 @@ const app = express()
 app.use(express.json())
 app.use(cookieParser())
 app.use(cors({
-    origin: ["http://localhost:5173", "https://ai-cv-maker.vercel.app"],
+    origin: ["http://localhost:5173", "https://ai-cv-maker-three.vercel.app"],
     credentials: true
 }))
 
