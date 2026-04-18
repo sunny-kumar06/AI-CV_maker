@@ -44,11 +44,12 @@ async function registerUserController(req, res) {
     );
 
     // 🔥 FIXED COOKIE
+    const isProd = process.env.NODE_ENV === "production";
+
     res.cookie("token", token, {
         httpOnly: true,
-        secure: true,        // ⚠️ required for Vercel
-        sameSite: "None",    // ⚠️ required for cross-origin
-        maxAge: 24 * 60 * 60 * 1000
+        secure: isProd,
+        sameSite: isProd ? "None" : "lax",
     });
 
     return res.status(201).json({
@@ -67,44 +68,111 @@ async function registerUserController(req, res) {
  * @access public
  * @route POST /api/auth/login  
  */
+// async function loginUserController(req, res) {
+//     try {
+//         const { email, password } = req.body;
+
+//         const user = await userModel.findOne({ email });
+
+//         if (!user) {
+//             return res.status(400).json({ message: "Invalid email or password" });
+//         }
+
+//         const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+//         if (!isPasswordCorrect) {
+//             return res.status(400).json({ message: "Invalid email or password" });
+//         }
+
+//         // 🔥 DEBUG
+//         console.log("JWT SECRET:", process.env.JWT_SECRET);
+
+//         const token = jwt.sign(
+//             { id: user._id, username: user.username },
+//             process.env.JWT_SECRET,
+//             { expiresIn: "1d" }
+//         );
+
+//         res.cookie("token", token, {
+//             httpOnly: true,
+//             secure: false,
+//             sameSite: "lax",
+//             maxAge: 24 * 60 * 60 * 1000
+//         });
+
+//         return res.status(200).json({
+//             message: "User logged in successfully",
+//             user: {
+//                 id: user._id,
+//                 username: user.username,
+//                 email: user.email
+//             }
+//         });
+
+//     } catch (error) {
+//         console.log("LOGIN ERROR:", error);  // 🔥 IMPORTANT
+//         return res.status(500).json({ message: "Server error" });
+//     }
+// }
 
 async function loginUserController(req, res) {
-    const { email, password } = req.body
-    const user = await userModel.findOne({ email })
-    if (!user) {
-        return res.status(400).json({ message: "Invalid email or password" })
-    }
-    const isPasswordCorrect = await bcrypt.compare(password, user.password)
-    if (!isPasswordCorrect) {
-        return res.status(400).json({ message: "Invalid email or password" })
-    }
+    try {
+        console.log("STEP 1: request received");
 
+        const { email, password } = req.body;
+        console.log("STEP 2:", email);
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    );
+        const user = await userModel.findOne({ email });
+        console.log("STEP 3: user found?", user ? true : false);
 
-    // 🔥 FIXED COOKIE
-    res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,        // ⚠️ required for Vercel (HTTPS)
-        sameSite: "None",    // ⚠️ required for cross-origin
-        maxAge: 24 * 60 * 60 * 1000 // optional (1 day)
-    });
-
-    return res.status(200).json({
-        message: "User logged in successfully",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
+        if (!user) {
+            return res.status(400).json({ message: "Invalid email or password" });
         }
-    });
 
+        console.log("STEP 4: comparing password");
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+        console.log("STEP 5: password match?", isPasswordCorrect);
+
+        if (!isPasswordCorrect) {
+            return res.status(400).json({ message: "Invalid email or password" });
+        }
+
+        console.log("STEP 6: JWT secret", process.env.JWT_SECRET);
+
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        console.log("STEP 7: token generated");
+
+        const isProd = true; // 🔥 since deployed
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: true,        // 🔥 MUST for HTTPS
+            sameSite: "None",    // 🔥 MUST for cross-origin
+        });
+
+        console.log("STEP 8: cookie set");
+
+        return res.status(200).json({
+            message: "User logged in successfully",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.log("🔥 LOGIN ERROR:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
 }
-
 
 /**
     * @name logout
@@ -121,7 +189,11 @@ async function logoutUserController(req, res) {
         await Blacklist.create({ token })
     }
 
-    res.clearCookie("token")
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
 
     return res.status(200).json({
         message: "User logged out successfully"
@@ -148,3 +220,4 @@ module.exports = {
     logoutUserController,
     getMeController
 }
+
