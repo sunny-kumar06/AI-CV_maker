@@ -37,22 +37,82 @@
 //     }
 
 
-import { loginUser, registerUser, logout } from "../services/auth.api";
+// import { loginUser, registerUser, logout } from "../services/auth.api";
+// import { useAuth as useAuthContext } from "../auth.context";
+
+// export const useAuth = () => {
+//     const { user, setUser, loading, setLoading } = useAuthContext();
+
+//     // 🔥 LOGIN FIX
+//     const handleLogin = async (formData) => {
+//         try {
+//             setLoading(true);
+
+//             const data = await loginUser(formData);
+
+//             console.log("LOGIN RESPONSE:", data); // debug
+
+//             setUser(data.user); // ✅ MOST IMPORTANT
+
+//             return data;
+//         } catch (error) {
+//             console.error(error);
+//             return null;
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     // REGISTER
+//     const handleRegister = async (formData) => {
+//         try {
+//             setLoading(true);
+
+//             const data = await registerUser(formData);
+
+//             setUser(data.user);
+
+//             return data;
+//         } catch (error) {
+//             console.error(error);
+//             return null;
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     // LOGOUT
+//     const handleLogout = async () => {
+//         try {
+//             await logout();
+//             setUser(null);
+//         } catch (error) {
+//             console.error(error);
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     return { user, loading, handleLogin, handleRegister, handleLogout };
+// };
+
+
+import { login, register, logout } from "../services/auth.api";
 import { useAuth as useAuthContext } from "../auth.context";
 
 export const useAuth = () => {
     const { user, setUser, loading, setLoading } = useAuthContext();
 
-    // 🔥 LOGIN FIX
+    // LOGIN
     const handleLogin = async (formData) => {
         try {
             setLoading(true);
 
-            const data = await loginUser(formData);
+            const data = await login(formData);   // ✅ FIXED
 
-            console.log("LOGIN RESPONSE:", data); // debug
+            console.log("LOGIN RESPONSE:", data);
 
-            setUser(data.user); // ✅ MOST IMPORTANT
+            setUser(data.user);
 
             return data;
         } catch (error) {
@@ -68,7 +128,7 @@ export const useAuth = () => {
         try {
             setLoading(true);
 
-            const data = await registerUser(formData);
+            const data = await register(formData);  // ✅ FIXED
 
             setUser(data.user);
 
