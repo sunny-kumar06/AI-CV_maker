@@ -153,8 +153,9 @@ async function loginUserController(req, res) {
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,        // 🔥 MUST for HTTPS
-            sameSite: "None",    // 🔥 MUST for cross-origin
+            secure: true,      // 🔥 LOCALHOST के लिए
+            sameSite: "none"
+
         });
 
         console.log("STEP 8: cookie set");
