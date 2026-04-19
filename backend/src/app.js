@@ -36,7 +36,7 @@ const app = express();
 
 // 🔥 VERY IMPORTANT (PUT AT TOP)
 app.use(cors({
-    origin: "https://ai-cv-maker-23tq4zhry-sunny-kumar06s-projects.vercel.app",
+    origin: "https://ai-cv-maker-three.vercel.app",
     credentials: true
 }));
 
