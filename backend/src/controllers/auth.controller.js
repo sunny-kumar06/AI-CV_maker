@@ -154,7 +154,8 @@ async function loginUserController(req, res) {
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,      // 🔥 LOCALHOST के लिए
-            sameSite: "none"
+            sameSite: "none",
+            path: "/"
 
         });
 
