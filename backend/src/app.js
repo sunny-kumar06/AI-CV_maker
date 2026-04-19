@@ -35,9 +35,24 @@ const cors = require("cors");
 const app = express();
 
 // 🔥 VERY IMPORTANT (PUT AT TOP)
+const allowedOrigins = [
+    "https://ai-cv-maker-gilt.vercel.app",
+    "https://ai-cv-maker-three.vercel.app",
+    "http://localhost:5173",
+];
+
 app.use(cors({
-    origin: "https://ai-cv-maker-three.vercel.app",
-    credentials: true
+    origin: function (origin, callback) {
+        // allow requests with no origin (Postman, curl)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error("Not allowed by CORS: " + origin));
+        }
+    },
+    credentials: true,
 }));
 
 
