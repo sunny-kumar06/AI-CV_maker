@@ -120,10 +120,11 @@ async function loginUserController(req, res) {
         console.log("STEP 1: request received");
 
         const { email, password } = req.body;
-        console.log("STEP 2:", email);
+        console.log("EMAIL:", email);
 
         const user = await userModel.findOne({ email });
-        console.log("STEP 3: user found?", user ? true : false);
+        console.log("USER FOUND:", user);
+
 
         if (!user) {
             return res.status(400).json({ message: "Invalid email or password" });
