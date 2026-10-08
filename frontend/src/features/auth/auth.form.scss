@@ -35,6 +35,14 @@
     max-width: 440px;
     box-shadow: var(--glass-shadow);
 
+    @media (max-width: 480px) {
+      padding: 24px 18px;
+    }
+
+    @media (max-width: 360px) {
+      padding: 20px 14px;
+    }
+
     .auth-brand-head {
       display: flex;
       flex-direction: column;

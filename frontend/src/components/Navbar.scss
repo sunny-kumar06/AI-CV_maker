@@ -286,9 +286,15 @@
     position: sticky;
     top: 0;
     z-index: 990;
+    width: 100%;
     background: var(--bg-card);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-color);
+
+    @media (max-width: 480px) {
+      padding: 0 14px;
+    }
 
     .navbar-brand {
       display: flex;
@@ -320,12 +326,31 @@
     }
 
     .mobile-hamburger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
       background: transparent;
-      border: none;
+      border: 1px solid var(--border-color);
       color: var(--text-primary);
       cursor: pointer;
-      padding: 6px;
+      padding: 0;
       border-radius: var(--radius-sm);
+      transition: background 150ms ease, border-color 150ms ease;
+
+      &:hover {
+        background: var(--bg-elevated);
+        border-color: var(--border-hover);
+      }
+
+      .svg-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
   }
 
@@ -333,14 +358,18 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 998;
   }
 
   .glass-sidebar {
+    width: 280px;
+    max-width: 85vw;
     transform: translateX(-100%);
     z-index: 999;
+    box-shadow: 12px 0 40px rgba(0, 0, 0, 0.4);
 
     &.mobile-open {
       transform: translateX(0);
