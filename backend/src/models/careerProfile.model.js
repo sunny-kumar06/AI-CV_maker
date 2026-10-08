@@ -70,7 +70,12 @@ const careerProfileSchema = new mongoose.Schema({
     weeklyPlan: [weeklyPlanSchema],
     suggestedProjects: [suggestedProjectSchema]
   },
-  resumeSuggestions: [resumeSuggestionSchema]
+  resumeSuggestions: [resumeSuggestionSchema],
+  analysisStatus: {
+    type: String,
+    enum: ["not_started", "resume_uploaded", "analyzing", "completed", "failed"],
+    default: "completed"
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model("CareerProfile", careerProfileSchema);

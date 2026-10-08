@@ -44,7 +44,8 @@ async function analyzeCareerController(req, res) {
         readinessScore: aiResult.readinessScore || { overall: 0, skillMatch: 0, resumeQuality: 0, interviewReadiness: 0, projectStrength: 0, breakdownReason: "" },
         recommendedRoles: aiResult.recommendedRoles || [],
         roadmap: aiResult.roadmap || { careerGoal: targetRole, currentLevel: "Intermediate", weeklyPlan: [], suggestedProjects: [] },
-        resumeSuggestions: aiResult.resumeSuggestions || []
+        resumeSuggestions: aiResult.resumeSuggestions || [],
+        analysisStatus: "completed"
       },
       { upsert: true, new: true, runValidators: true }
     );
@@ -80,6 +81,7 @@ async function analyzeCareerController(req, res) {
     return res.status(200).json({
       message: "Career analysis completed successfully",
       careerProfile,
+      analysisStatus: "completed",
       progress
     });
   } catch (error) {
@@ -103,11 +105,15 @@ async function getCareerProfileController(req, res) {
     if (!careerProfile) {
       return res.status(200).json({
         message: "No profile found. Run analysis to create one.",
-        careerProfile: null
+        careerProfile: null,
+        analysisStatus: "not_started"
       });
     }
 
-    return res.status(200).json({ careerProfile });
+    return res.status(200).json({
+      careerProfile,
+      analysisStatus: careerProfile.analysisStatus || "completed"
+    });
   } catch (error) {
     console.error("❌ Error in getCareerProfileController:", error);
     return res.status(500).json({ message: "Server error fetching career profile" });
