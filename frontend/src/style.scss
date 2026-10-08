@@ -134,8 +134,12 @@ img, video, canvas, svg, input, select, textarea, button {
 
 .grid-cols-2 > *, .grid-cols-3 > *, .grid-cols-4 > *, .kpi-summary-grid > *,
 .career-profile-grid > *, .main-intelligence-grid > *, .activity-modules-grid > *,
-.dashboard-main-grid > *, .interview-form-grid > * {
+.dashboard-main-grid > *, .interview-form-grid > *, .modules-3col-grid > *,
+.goal-card-content > *, .roles-recommendation-list > *, .skill-groups-container > *,
+.hero-banner-content > *, .role-title-desc, .timeline-content, .card-header-block,
+.next-action-details, .goal-info-side, .goal-visual-side {
   min-width: 0;
+  max-width: 100%;
 }
 
 html, body {
@@ -264,7 +268,7 @@ html, body, .app-layout, .page-container, .c-card, .c-btn, .c-form-input, .c-for
   position: fixed;
   inset: 0;
   z-index: 9999;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   background-color: var(--bg-primary);
   display: flex;
@@ -521,7 +525,9 @@ html, body, .app-layout, .page-container, .c-card, .c-btn, .c-form-input, .c-for
 
   .header-meta {
     flex: 1;
-    min-width: 280px;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
 
     .header-breadcrumb {
       font-size: 12px;
@@ -929,7 +935,15 @@ input[type="range"] {
   gap: 4px;
   font-weight: 600;
   border-radius: var(--radius-sm);
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  height: auto;
+  min-height: 22px;
+  line-height: 1.35;
+  box-sizing: border-box;
+  text-align: left;
 
   &.c-badge-sm {
     padding: 2px 8px;
@@ -977,12 +991,17 @@ input[type="range"] {
    ==================================================== */
 .c-progress-track {
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: #E2E8F0;
   border-radius: var(--radius-full);
   overflow: hidden;
+  flex-shrink: 0;
 
   .c-progress-bar-fill {
     height: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     border-radius: var(--radius-full);
     transition: width 0.4s ease;
   }
@@ -1091,13 +1110,16 @@ input[type="range"] {
 
     .hero-meta {
       flex: 1;
-      min-width: 280px;
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
 
       .hero-eyebrow-row {
         display: flex;
         align-items: center;
         gap: 12px;
         margin-bottom: 8px;
+        flex-wrap: wrap;
 
         .hero-eyebrow {
           font-size: 11px;
@@ -1117,6 +1139,10 @@ input[type="range"] {
           border: 1px solid rgba(255, 255, 255, 0.1);
           padding: 2px 8px;
           border-radius: var(--radius-full);
+          max-width: 100%;
+          white-space: normal;
+          overflow-wrap: anywhere;
+          word-break: break-word;
         }
       }
 
@@ -1492,7 +1518,7 @@ input[type="range"] {
 /* 3. MAIN INTELLIGENCE GRID */
 .main-intelligence-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
   gap: 20px;
 
   .skill-gap-overview-card, .suitable-roles-card {
@@ -1504,31 +1530,45 @@ input[type="range"] {
     flex-direction: column;
     justify-content: space-between;
     box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    min-width: 0;
 
     .card-header-block {
       margin-bottom: 16px;
+      width: 100%;
+      min-width: 0;
 
       .card-title-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 4px;
+        flex-wrap: wrap;
+        gap: 8px;
 
         .section-card-title {
           font-size: 17px;
           font-weight: 700;
           color: var(--text-primary);
+          min-width: 0;
         }
 
         .skill-counts-badge {
           display: flex;
           gap: 6px;
+          flex-wrap: wrap;
 
           .count-tag {
             font-size: 11px;
             font-weight: 600;
             padding: 2px 8px;
             border-radius: var(--radius-full);
+            white-space: normal;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
 
             &.tag-success {
               background: var(--color-success-bg);
@@ -1559,8 +1599,13 @@ input[type="range"] {
       flex-direction: column;
       gap: 14px;
       margin-bottom: 16px;
+      width: 100%;
+      min-width: 0;
 
       .skill-category-block {
+        width: 100%;
+        min-width: 0;
+
         .category-label {
           font-size: 11px;
           font-weight: 700;
@@ -1569,6 +1614,7 @@ input[type="range"] {
           display: flex;
           align-items: center;
           gap: 6px;
+          flex-wrap: wrap;
 
           &.text-success { color: var(--color-success); }
           &.text-danger { color: var(--color-danger); }
@@ -1590,15 +1636,24 @@ input[type="range"] {
           display: flex;
           flex-wrap: wrap;
           gap: 6px;
+          width: 100%;
+          min-width: 0;
 
           .chip-badge {
-            height: 28px;
-            padding: 0 10px;
+            min-height: 28px;
+            height: auto;
+            padding: 4px 10px;
             border-radius: var(--radius-sm);
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 500;
             display: inline-flex;
             align-items: center;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.35;
+            box-sizing: border-box;
 
             &.chip-success {
               background: var(--color-success-bg);
@@ -1651,6 +1706,8 @@ input[type="range"] {
       flex-direction: column;
       gap: 10px;
       margin-bottom: 16px;
+      width: 100%;
+      min-width: 0;
 
       .role-recommendation-row {
         background: var(--bg-primary);
@@ -1660,11 +1717,17 @@ input[type="range"] {
         display: flex;
         flex-direction: column;
         gap: 8px;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        min-width: 0;
 
         .row-left-info {
           display: flex;
           gap: 10px;
           align-items: flex-start;
+          width: 100%;
+          min-width: 0;
 
           .role-icon-box {
             width: 32px;
@@ -1680,25 +1743,36 @@ input[type="range"] {
 
           .role-title-desc {
             flex: 1;
+            min-width: 0;
+            width: 100%;
+            max-width: 100%;
 
             .role-title-row {
               display: flex;
               justify-content: space-between;
               align-items: center;
+              gap: 8px;
               margin-bottom: 4px;
+              flex-wrap: wrap;
 
               .role-name {
                 font-size: 14px;
                 font-weight: 600;
                 color: var(--text-primary);
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                min-width: 0;
+                flex: 1;
               }
 
               .match-pill {
                 font-size: 11px;
                 font-weight: 700;
-                padding: 1px 6px;
+                padding: 2px 8px;
                 border-radius: var(--radius-full);
                 border: 1px solid currentColor;
+                white-space: nowrap;
+                flex-shrink: 0;
               }
             }
 
@@ -1707,6 +1781,8 @@ input[type="range"] {
               align-items: center;
               gap: 4px;
               flex-wrap: wrap;
+              width: 100%;
+              min-width: 0;
 
               .matching-label {
                 font-size: 11px;
@@ -1719,8 +1795,15 @@ input[type="range"] {
                 background: var(--bg-card);
                 border: 1px solid var(--border-color);
                 color: var(--text-secondary);
-                padding: 1px 6px;
+                padding: 2px 8px;
                 border-radius: 4px;
+                max-width: 100%;
+                white-space: normal;
+                overflow-wrap: anywhere;
+                word-break: break-word;
+                height: auto;
+                line-height: 1.35;
+                box-sizing: border-box;
               }
             }
           }
@@ -2051,6 +2134,23 @@ input[type="range"] {
 
   .career-profile-grid .career-goal-card .goal-card-content {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .c-card, .kpi-metric-card, .career-goal-card, .next-action-card,
+  .skill-gap-overview-card, .suitable-roles-card, .recent-activity-card,
+  .platform-modules-section {
+    padding: 16px 14px;
+  }
+
+  .suitable-roles-card .roles-recommendation-list .role-recommendation-row .row-left-info .role-title-desc .role-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+
+    .role-name {
+      width: 100%;
+    }
   }
 
   .dashboard-hero-header {
@@ -2093,14 +2193,30 @@ input[type="range"] {
   }
 
   .c-state-card {
-    padding: 32px 16px;
-    margin: 20px auto;
+    padding: 24px 14px;
+    margin: 16px auto;
   }
 }
 
 @media (max-width: 480px) {
   .page-container {
-    padding: 16px 12px;
+    padding: 14px 12px;
+  }
+
+  .c-card, .kpi-metric-card, .career-goal-card, .next-action-card,
+  .skill-gap-overview-card, .suitable-roles-card, .recent-activity-card,
+  .platform-modules-section {
+    padding: 14px 12px;
+  }
+
+  .goal-meta-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card-header-block .card-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 
   .c-btn-lg {
@@ -2110,7 +2226,7 @@ input[type="range"] {
   }
 
   .c-fileupload-dropzone {
-    padding: 16px 12px;
+    padding: 14px 10px;
   }
 
   .c-form-group .c-form-input {
@@ -2121,10 +2237,12 @@ input[type="range"] {
 
 @media (max-width: 360px) {
   .page-container {
-    padding: 12px 8px;
+    padding: 10px 6px;
   }
 
-  .c-card {
-    padding: 14px 12px;
+  .c-card, .kpi-metric-card, .career-goal-card, .next-action-card,
+  .skill-gap-overview-card, .suitable-roles-card, .recent-activity-card,
+  .platform-modules-section {
+    padding: 12px 10px;
   }
 }
