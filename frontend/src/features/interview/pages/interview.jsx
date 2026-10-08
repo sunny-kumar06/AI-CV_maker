@@ -152,9 +152,9 @@ const Interview = () => {
             <Card elevated style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '4px' }}>Job Match Score</div>
               <div style={{ fontSize: '36px', fontWeight: '800', color: 'var(--accent-primary)', marginBottom: '8px' }}>
-                {report.matchScore || 75}%
+                {report.matchScore || 0}%
               </div>
-              <ProgressBar value={report.matchScore || 75} color="var(--accent-primary)" height={6} />
+              <ProgressBar value={report.matchScore || 0} color="var(--accent-primary)" height={6} />
             </Card>
 
             <Card>

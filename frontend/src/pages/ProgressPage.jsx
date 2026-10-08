@@ -1,34 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PageHeader from '../components/ui/PageHeader';
 import { Card, Badge, ProgressBar } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
+import Icon from '../components/Icon';
 import { LoadingState } from '../components/ui/StateViews';
-import { getUserProgress, updateUserProgress } from '../features/career/services/career.api';
+import { useCareerProfile } from '../context/career.context';
+import { updateUserProgress } from '../features/career/services/career.api';
 
 const ProgressPage = () => {
-  const [progress, setProgress] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { progress, setProgress, loading, hasProfile } = useCareerProfile();
+
   const [saving, setSaving] = useState(false);
   const [newSkill, setNewSkill] = useState('');
   const [newProject, setNewProject] = useState('');
-
-  useEffect(() => {
-    loadProgress();
-  }, []);
-
-  const loadProgress = async () => {
-    try {
-      setLoading(true);
-      const res = await getUserProgress();
-      setProgress(res.progress);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleUpdatePercentage = (skillName, newPct) => {
     if (!progress) return;
@@ -40,7 +28,8 @@ const ProgressPage = () => {
       }
       return s;
     });
-    setProgress({ ...progress, skillProgress: updatedSkills });
+    const updated = { ...progress, skillProgress: updatedSkills };
+    if (setProgress) setProgress(updated);
   };
 
   const handleAddSkill = (e) => {
@@ -51,16 +40,18 @@ const ProgressPage = () => {
       alert("Skill already being tracked");
       return;
     }
-    const updated = [...(progress.skillProgress || []), { skill: newSkill.trim(), percentage: 0, status: 'NOT_STARTED' }];
-    setProgress({ ...progress, skillProgress: updated });
+    const updatedSkills = [...(progress.skillProgress || []), { skill: newSkill.trim(), percentage: 0, status: 'NOT_STARTED' }];
+    const updated = { ...progress, skillProgress: updatedSkills };
+    if (setProgress) setProgress(updated);
     setNewSkill('');
   };
 
   const handleAddProject = (e) => {
     e.preventDefault();
     if (!newProject.trim() || !progress) return;
-    const updated = [...(progress.completedProjects || []), newProject.trim()];
-    setProgress({ ...progress, completedProjects: updated });
+    const updatedProjects = [...(progress.completedProjects || []), newProject.trim()];
+    const updated = { ...progress, completedProjects: updatedProjects };
+    if (setProgress) setProgress(updated);
     setNewProject('');
   };
 
@@ -87,6 +78,7 @@ const ProgressPage = () => {
   const skillsTracked = progress?.skillProgress?.length || 0;
   const projectsCompleted = progress?.completedProjects?.length || 0;
   const weeksDone = progress?.roadmapWeeksCompleted?.length || 0;
+  const interviewSessions = progress?.interviewPracticeCount || 0;
 
   return (
     <div className="app-layout">
@@ -97,14 +89,39 @@ const ProgressPage = () => {
           title="Learning Progress"
           description="Track your technical skill percentages, roadmap milestones, and built projects."
           action={
-            <Button variant="primary" icon="save" loading={saving} onClick={handleSaveProgress}>
-              Save Progress to Database
-            </Button>
+            hasProfile ? (
+              <Button variant="primary" icon="save" loading={saving} onClick={handleSaveProgress}>
+                Save Progress to Database
+              </Button>
+            ) : null
           }
         />
 
         {loading ? (
           <LoadingState title="Loading Learning Progress..." message="Fetching tracked skills and project milestones." />
+        ) : !hasProfile ? (
+          <Card style={{ padding: '48px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--color-light-indigo)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontSize: '28px' }}>
+              <Icon name="award" />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '8px' }}>
+                No Career Progress Tracked Yet
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '480px', margin: '0 auto', lineHeight: '1.5' }}>
+                Your career progress will appear here after your first career analysis. Upload your resume to begin tracking your learning milestones.
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              icon="sparkles"
+              onClick={() => navigate('/advisor')}
+              style={{ marginTop: '8px' }}
+            >
+              Upload Resume
+            </Button>
+          </Card>
         ) : (
           <>
             {/* Overview Stats Cards */}
@@ -126,14 +143,14 @@ const ProgressPage = () => {
               <Card elevated>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Roadmap Progress</div>
                 <div style={{ fontSize: '28px', fontWeight: '800', color: 'var(--accent-cyan)', marginTop: '4px' }}>
-                  {weeksDone} / 4 Weeks
+                  {weeksDone} Weeks Done
                 </div>
               </Card>
 
               <Card elevated>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Interview Practice</div>
                 <div style={{ fontSize: '28px', fontWeight: '800', color: 'var(--color-warning)', marginTop: '4px' }}>
-                  {progress?.interviewPracticeCount || 1} Sessions
+                  {interviewSessions} Sessions
                 </div>
               </Card>
             </div>

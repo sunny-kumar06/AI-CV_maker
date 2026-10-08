@@ -6,11 +6,13 @@ import Button from '../ui/Button';
 const CareerOverview = ({ profile }) => {
   const navigate = useNavigate();
 
-  const targetRole = profile?.targetRole || 'Full Stack Developer';
-  const explanation = profile?.readinessScore?.breakdownReason ||
-    'Solid foundation in core engineering. Focus on system design and deployment to maximize job readiness.';
-  const level = profile?.roadmap?.currentLevel || 'Intermediate';
-  const readiness = profile?.readinessScore?.overall || 75;
+  const isAnalyzed = Boolean(profile && profile.readinessScore?.overall > 0);
+  const targetRole = isAnalyzed ? (profile?.targetRole || 'Software Engineer') : 'Not Set';
+  const explanation = isAnalyzed
+    ? (profile?.readinessScore?.breakdownReason || 'Career profile generated.')
+    : 'Upload your resume to perform AI career analysis and generate a personalized readiness score.';
+  const level = isAnalyzed ? (profile?.roadmap?.currentLevel || 'Intermediate') : 'Not Assessed';
+  const readiness = isAnalyzed ? `${profile.readinessScore.overall}% Ready` : 'Not Analyzed';
 
   return (
     <Card className="career-overview-card">
@@ -20,7 +22,7 @@ const CareerOverview = ({ profile }) => {
           <h2 className="overview-title">{targetRole}</h2>
         </div>
         <Button variant="secondary" size="sm" icon="sparkles" onClick={() => navigate('/advisor')}>
-          Update Goal
+          {isAnalyzed ? 'Update Goal' : 'Set Goal'}
         </Button>
       </div>
 
@@ -33,7 +35,7 @@ const CareerOverview = ({ profile }) => {
         </div>
         <div className="stat-pill">
           <span className="stat-label">Current Readiness</span>
-          <span className="stat-value readiness-tag">{readiness}% Ready</span>
+          <span className="stat-value readiness-tag">{readiness}</span>
         </div>
         <div className="stat-pill">
           <span className="stat-label">Target Role</span>
@@ -42,7 +44,7 @@ const CareerOverview = ({ profile }) => {
       </div>
 
       <Button variant="primary" fullWidth icon="arrowRight" iconPosition="right" onClick={() => navigate('/advisor')}>
-        Run New Career Analysis
+        {isAnalyzed ? 'Run New Career Analysis' : 'Upload Resume & Analyze'}
       </Button>
     </Card>
   );

@@ -12,12 +12,18 @@ const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await handleLogin({ email, password });
-    if (res) {
-      navigate("/");
+    setError("");
+    try {
+      const res = await handleLogin({ email, password });
+      if (res) {
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Failed to log in. Please check your credentials.");
     }
   };
 
@@ -31,6 +37,8 @@ const Login = () => {
           <h2 className="auth-title">Welcome back to CareerAI</h2>
           <p className="auth-subtitle">Log in to access your career roadmap and job readiness analytics.</p>
         </div>
+
+        {error && <div className="auth-error-banner">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <Input

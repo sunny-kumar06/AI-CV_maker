@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import PageHeader from '../components/ui/PageHeader';
 import { Card, Badge, ProgressBar } from '../components/ui/Card';
@@ -6,26 +6,19 @@ import Button from '../components/ui/Button';
 import { Input, Textarea } from '../components/ui/Input';
 import FileUpload from '../components/ui/FileUpload';
 import { LoadingState, ErrorState } from '../components/ui/StateViews';
-import { analyzeCareer, getCareerProfile } from '../features/career/services/career.api';
+import { useCareerProfile } from '../context/career.context';
 
 const CareerAdvisor = () => {
-  const [targetRole, setTargetRole] = useState('Full Stack Developer');
-  const [jobDescription, setJobDescription] = useState('');
+  const { profile, hasProfile, runCareerAnalysis } = useCareerProfile();
+
+  const [targetRole, setTargetRole] = useState(profile?.targetRole || 'Software Engineer');
+  const [jobDescription, setJobDescription] = useState(profile?.jobDescription || '');
   const [selfDescription, setSelfDescription] = useState('');
-  const [resumeText, setResumeText] = useState('');
+  const [resumeText, setResumeText] = useState(profile?.resumeText || '');
   const [resumeFile, setResumeFile] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    getCareerProfile()
-      .then(res => {
-        if (res.careerProfile) setProfile(res.careerProfile);
-      })
-      .catch(() => {});
-  }, []);
 
   const handleRunAnalysis = async (e) => {
     e.preventDefault();
@@ -34,24 +27,23 @@ const CareerAdvisor = () => {
       return;
     }
     if (!resumeFile && !resumeText && !jobDescription && !selfDescription) {
-      alert("Please provide a Resume file, text, or Job Description.");
+      alert("Please upload your Resume (PDF) or paste your resume text.");
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      const res = await analyzeCareer({
+      await runCareerAnalysis({
         resumeFile,
         resumeText,
         jobDescription,
         selfDescription,
         targetRole
       });
-      setProfile(res.careerProfile);
     } catch (err) {
       console.error("Analysis Error:", err);
-      setError("Failed to run AI Career Analysis. Please try again.");
+      setError("Failed to run AI Career Analysis. Please verify backend & API keys.");
     } finally {
       setLoading(false);
     }
@@ -66,6 +58,20 @@ const CareerAdvisor = () => {
           title="AI Career Advisor"
           description="Get personalized career guidance based on your resume, skills, and target role."
         />
+
+        {!hasProfile && (
+          <div style={{ background: 'var(--color-light-indigo)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{ fontSize: '24px' }}>📄</span>
+            <div>
+              <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--accent-primary)', marginBottom: '2px' }}>
+                Your AI Career Advisor is waiting for your resume
+              </h4>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                Upload your resume first so CareerAI can understand your skills, experience and career goals.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Input Form Card */}
         <Card style={{ marginBottom: '32px' }}>
@@ -136,7 +142,7 @@ const CareerAdvisor = () => {
         )}
 
         {/* Analysis Results Display */}
-        {profile && !loading && (
+        {profile && hasProfile && !loading && (
           <div style={{ marginTop: '24px' }}>
             <h2 style={{ fontSize: '22px', fontWeight: '700', marginBottom: '20px', color: 'var(--text-primary)' }}>
               Career Analysis for <span style={{ color: 'var(--accent-primary)' }}>{profile.targetRole}</span>
@@ -152,10 +158,10 @@ const CareerAdvisor = () => {
                   </p>
                 </div>
                 <div style={{ fontSize: '32px', fontWeight: '800', color: 'var(--accent-primary)' }}>
-                  {profile.readinessScore?.overall || 75}%
+                  {profile.readinessScore?.overall || 0}%
                 </div>
               </div>
-              <ProgressBar value={profile.readinessScore?.overall || 75} color="var(--accent-primary)" height={8} />
+              <ProgressBar value={profile.readinessScore?.overall || 0} color="var(--accent-primary)" height={8} />
             </Card>
 
             {/* Skill Gap Matrix */}

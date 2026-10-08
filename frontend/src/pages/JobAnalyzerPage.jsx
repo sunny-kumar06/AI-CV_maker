@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PageHeader from '../components/ui/PageHeader';
 import { Card, Badge } from '../components/ui/Card';
@@ -6,8 +7,12 @@ import Button from '../components/ui/Button';
 import { Textarea } from '../components/ui/Input';
 import { LoadingState, ErrorState } from '../components/ui/StateViews';
 import { analyzeJobDescription } from '../features/job/services/job.api';
+import { useCareerProfile } from '../context/career.context';
 
 const JobAnalyzerPage = () => {
+  const navigate = useNavigate();
+  const { hasProfile } = useCareerProfile();
+
   const [jobDescription, setJobDescription] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -42,6 +47,22 @@ const JobAnalyzerPage = () => {
           title="Job Description Analyzer"
           description="Extract required skills, technologies, experience requirements, and duties from any job posting."
         />
+
+        {!hasProfile && (
+          <div style={{ background: 'var(--color-light-indigo)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px 20px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--accent-primary)', marginBottom: '2px' }}>
+                Compare Job Postings With Your Profile
+              </h4>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                Upload your resume first to compare your profile with this job and see personalized skill compatibility scores.
+              </p>
+            </div>
+            <Button variant="secondary" size="sm" icon="sparkles" onClick={() => navigate('/advisor')}>
+              Upload Resume First
+            </Button>
+          </div>
+        )}
 
         <Card elevated style={{ marginBottom: '32px' }}>
           <form onSubmit={handleAnalyze}>

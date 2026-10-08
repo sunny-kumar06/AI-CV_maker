@@ -1,34 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PageHeader from '../components/ui/PageHeader';
 import { Card, Badge, ProgressBar } from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import Icon from '../components/Icon';
 import { LoadingState } from '../components/ui/StateViews';
-import { getCareerProfile, getUserProgress, updateUserProgress } from '../features/career/services/career.api';
+import { useCareerProfile } from '../context/career.context';
+import { updateUserProgress } from '../features/career/services/career.api';
 
 const CareerRoadmapPage = () => {
-  const [profile, setProfile] = useState(null);
-  const [progress, setProgress] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const [profRes, progRes] = await Promise.all([
-          getCareerProfile().catch(() => ({ careerProfile: null })),
-          getUserProgress().catch(() => ({ progress: null }))
-        ]);
-        setProfile(profRes.careerProfile);
-        setProgress(progRes.progress);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadData();
-  }, []);
+  const navigate = useNavigate();
+  const { profile, progress, setProgress, loading, hasProfile } = useCareerProfile();
 
   const toggleWeekCompleted = async (weekNum) => {
     if (!progress) return;
@@ -40,28 +23,15 @@ const CareerRoadmapPage = () => {
       updated = [...currentCompleted, weekNum];
     }
     const newProg = { ...progress, roadmapWeeksCompleted: updated };
-    setProgress(newProg);
+    if (setProgress) setProgress(newProg);
     await updateUserProgress({ roadmapWeeksCompleted: updated });
   };
 
-  const roadmap = profile?.roadmap || {
-    careerGoal: 'Full Stack Developer',
-    currentLevel: 'Intermediate',
-    weeklyPlan: [
-      { week: 1, title: 'Advanced React & Architecture', topics: ['Custom Hooks & Context API', 'Code-splitting & Lazy Loading', 'React Performance Optimization'], projectGoal: 'Modular Component Library' },
-      { week: 2, title: 'Backend Security & Architecture', topics: ['REST API Best Practices', 'JWT & Security Middleware', 'Input Validation & Error Handling'], projectGoal: 'Secure Authentication Service' },
-      { week: 3, title: 'Docker & Production Deployment', topics: ['Containerization with Docker', 'Docker Compose Setup', 'Render & Vercel Deployment'], projectGoal: 'Containerized App Suite' },
-      { week: 4, title: 'System Design & Technical Prep', topics: ['Scalability & Caching (Redis)', 'Database Indexing & Queries', 'Mock Technical Interviews'], projectGoal: 'Production Capstone Platform' }
-    ],
-    suggestedProjects: [
-      { title: 'E-Commerce Microservices', description: 'Full stack shopping app with cart and payment integration.', techStack: ['React', 'Node.js', 'MongoDB'] },
-      { title: 'Real-Time Collaboration Tool', description: 'WebSocket-powered messaging platform.', techStack: ['React', 'Socket.io', 'Express'] },
-      { title: 'Production REST API Suite', description: 'Microservice backend with rate limiting & JWT auth.', techStack: ['Node.js', 'Express', 'Docker'] }
-    ]
-  };
-
+  const roadmap = profile?.roadmap;
   const completedWeeks = progress?.roadmapWeeksCompleted || [];
-  const roadmapProgressPct = Math.round((completedWeeks.length / (roadmap.weeklyPlan?.length || 4)) * 100);
+  const roadmapProgressPct = roadmap?.weeklyPlan?.length
+    ? Math.round((completedWeeks.length / roadmap.weeklyPlan.length) * 100)
+    : 0;
 
   return (
     <div className="app-layout">
@@ -75,6 +45,29 @@ const CareerRoadmapPage = () => {
 
         {loading ? (
           <LoadingState title="Loading Career Roadmap..." message="Structuring your week-by-week learning goals." />
+        ) : !hasProfile || !roadmap ? (
+          <Card style={{ padding: '48px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--color-light-indigo)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontSize: '28px' }}>
+              <Icon name="roadmap" />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '8px' }}>
+                Your Personalized Roadmap
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '480px', margin: '0 auto', lineHeight: '1.5' }}>
+                Complete your career analysis to generate a roadmap based on your actual skill gaps.
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              icon="sparkles"
+              onClick={() => navigate('/advisor')}
+              style={{ marginTop: '8px' }}
+            >
+              Analyze My Resume
+            </Button>
+          </Card>
         ) : (
           <>
             {/* Overview Stats */}
@@ -82,14 +75,14 @@ const CareerRoadmapPage = () => {
               <Card elevated>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Target Career Goal</div>
                 <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--accent-primary)', marginTop: '4px' }}>
-                  {roadmap.careerGoal}
+                  {roadmap.careerGoal || profile?.targetRole}
                 </div>
               </Card>
 
               <Card elevated>
                 <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>Current Assessed Level</div>
                 <div style={{ fontSize: '22px', fontWeight: '800', color: 'var(--accent-secondary)', marginTop: '4px' }}>
-                  {roadmap.currentLevel}
+                  {roadmap.currentLevel || 'Intermediate'}
                 </div>
               </Card>
 
@@ -102,14 +95,14 @@ const CareerRoadmapPage = () => {
               </Card>
             </div>
 
-            {/* Step-by-Step 4-Week Action Plan */}
+            {/* Step-by-Step Action Plan */}
             <Card style={{ marginBottom: '32px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>4-Week Action Learning Plan</h3>
+                  <h3 style={{ fontSize: '18px', fontWeight: '600', color: 'var(--text-primary)' }}>Weekly Learning Plan</h3>
                   <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>Mark off milestones as you complete topics and weekly project goals.</p>
                 </div>
-                <Badge variant="info">{completedWeeks.length} of 4 Weeks Done</Badge>
+                <Badge variant="info">{completedWeeks.length} of {roadmap.weeklyPlan?.length || 0} Weeks Done</Badge>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -165,24 +158,26 @@ const CareerRoadmapPage = () => {
             </Card>
 
             {/* Milestone Projects Grid */}
-            <Card>
-              <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: 'var(--text-primary)' }}>
-                Hands-On Portfolio Projects to Build
-              </h3>
-              <div className="grid-cols-3">
-                {(roadmap.suggestedProjects || []).map((proj, idx) => (
-                  <div key={idx} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px' }}>
-                    <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '6px' }}>{proj.title}</h4>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>{proj.description}</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                      {(proj.techStack || []).map((tech, tidx) => (
-                        <Badge key={tidx} variant="info" size="sm">{tech}</Badge>
-                      ))}
+            {roadmap.suggestedProjects && roadmap.suggestedProjects.length > 0 && (
+              <Card>
+                <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px', color: 'var(--text-primary)' }}>
+                  Hands-On Portfolio Projects to Build
+                </h3>
+                <div className="grid-cols-3">
+                  {roadmap.suggestedProjects.map((proj, idx) => (
+                    <div key={idx} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px' }}>
+                      <h4 style={{ fontSize: '15px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '6px' }}>{proj.title}</h4>
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>{proj.description}</p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {(proj.techStack || []).map((tech, tidx) => (
+                          <Badge key={tidx} variant="info" size="sm">{tech}</Badge>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
+                  ))}
+                </div>
+              </Card>
+            )}
           </>
         )}
       </main>

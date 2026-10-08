@@ -3,53 +3,48 @@ import { Card, ProgressBar } from '../ui/Card';
 import Icon from '../Icon';
 
 const ReadinessSummary = ({ readiness }) => {
-  const data = readiness || {
-    overall: 72,
-    skillMatch: 75,
-    resumeQuality: 75,
-    interviewReadiness: 68
-  };
+  const isAnalyzed = Boolean(readiness && readiness.overall > 0);
 
   const metrics = [
     {
       id: 'overall',
       label: 'Career Readiness',
-      score: data.overall || 72,
-      trend: '+12%',
-      color: '#10B981',
-      iconBg: '#10B981',
+      score: isAnalyzed ? readiness.overall : 0,
+      trend: isAnalyzed ? `${readiness.overall >= 75 ? '+' : ''}${Math.round(readiness.overall / 10)}%` : '--',
+      color: isAnalyzed ? '#10B981' : 'var(--text-muted)',
+      iconBg: isAnalyzed ? '#10B981' : 'var(--bg-elevated)',
       icon: 'target',
-      status: 'Job-ready evaluation'
+      status: isAnalyzed ? 'Job-ready evaluation' : 'Upload resume to calculate'
     },
     {
       id: 'skill',
       label: 'Skill Match',
-      score: data.skillMatch || 75,
-      trend: '+0%',
-      color: '#34D399',
-      iconBg: '#059669',
+      score: isAnalyzed ? readiness.skillMatch : 0,
+      trend: isAnalyzed ? 'Active' : '--',
+      color: isAnalyzed ? '#34D399' : 'var(--text-muted)',
+      iconBg: isAnalyzed ? '#059669' : 'var(--bg-elevated)',
       icon: 'checkCircle',
-      status: 'Target role alignment'
+      status: isAnalyzed ? 'Target role alignment' : 'Complete career analysis'
     },
     {
       id: 'resume',
       label: 'Resume Quality',
-      score: data.resumeQuality || 75,
-      trend: '+10%',
-      color: '#3B82F6',
-      iconBg: '#2563EB',
+      score: isAnalyzed ? readiness.resumeQuality : 0,
+      trend: isAnalyzed ? 'ATS Checked' : '--',
+      color: isAnalyzed ? '#3B82F6' : 'var(--text-muted)',
+      iconBg: isAnalyzed ? '#2563EB' : 'var(--bg-elevated)',
       icon: 'file',
-      status: 'ATS optimization rating'
+      status: isAnalyzed ? 'ATS optimization rating' : 'Resume upload required'
     },
     {
       id: 'interview',
       label: 'Interview Readiness',
-      score: data.interviewReadiness || 68,
-      trend: '+5%',
-      color: '#F59E0B',
-      iconBg: '#D97706',
+      score: isAnalyzed ? readiness.interviewReadiness : 0,
+      trend: isAnalyzed ? 'Evaluated' : '--',
+      color: isAnalyzed ? '#F59E0B' : 'var(--text-muted)',
+      iconBg: isAnalyzed ? '#D97706' : 'var(--bg-elevated)',
       icon: 'award',
-      status: 'Tech & behavioral prep level'
+      status: isAnalyzed ? 'Tech & behavioral prep level' : 'Complete career analysis'
     }
   ];
 
@@ -66,7 +61,7 @@ const ReadinessSummary = ({ readiness }) => {
 
           <div className="kpi-value-row">
             <span className="kpi-number" style={{ color: metric.color }}>
-              {metric.score}%
+              {isAnalyzed ? `${metric.score}%` : 'Not Analyzed'}
             </span>
             <span className="kpi-trend-pill" style={{ color: metric.color }}>
               {metric.trend}

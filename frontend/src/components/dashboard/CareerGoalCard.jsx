@@ -7,13 +7,62 @@ import Icon from '../Icon';
 const CareerGoalCard = ({ profile }) => {
   const navigate = useNavigate();
 
-  const targetRole = profile?.targetRole || profile?.careerOverview?.targetRole || 'Full Stack Developer';
-  const assessedLevel = profile?.roadmap?.currentLevel || profile?.experienceLevel || 'Junior';
-  const currentReadiness = profile?.readinessScore?.overall || 72;
-  const matchedSkillsCount = profile?.skills?.matched?.length || 5;
-  const missingSkillsCount = profile?.skills?.missing?.length || 4;
+  const isAnalyzed = Boolean(
+    profile && (profile.readinessScore?.overall > 0 || profile.skills?.matched?.length > 0)
+  );
+
+  if (!isAnalyzed) {
+    return (
+      <Card className="career-goal-card onboarding-card">
+        <div className="goal-card-content onboarding-content" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="goal-eyebrow-tag" style={{ background: 'var(--color-light-indigo)', color: 'var(--accent-primary)', padding: '4px 10px', borderRadius: '6px', width: 'fit-content', fontWeight: '700', fontSize: '11px' }}>
+            GET STARTED WITH CAREERAI
+          </div>
+          <div>
+            <h2 className="goal-target-title" style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '6px' }}>
+              Welcome to CareerAI 👋
+            </h2>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--accent-primary)', marginBottom: '10px' }}>
+              Let's build your personalized career profile.
+            </h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.5', maxWidth: '560px' }}>
+              Upload your resume and let CareerAI analyze your skills, experience and career direction to generate personalized readiness metrics, skill gap breakdown, and roadmap.
+            </p>
+          </div>
+
+          <div className="goal-btn-group" style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+            <Button
+              variant="primary"
+              size="md"
+              icon="sparkles"
+              onClick={() => navigate('/advisor')}
+            >
+              Upload Resume
+            </Button>
+            <Button
+              variant="secondary"
+              size="md"
+              icon="arrowRight"
+              onClick={() => {
+                const elem = document.querySelector('.activity-modules-grid');
+                if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Explore CareerAI
+            </Button>
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
+  const targetRole = profile?.targetRole || 'Software Engineer';
+  const assessedLevel = profile?.roadmap?.currentLevel || 'Intermediate';
+  const currentReadiness = profile?.readinessScore?.overall || 0;
+  const matchedSkillsCount = profile?.skills?.matched?.length || 0;
+  const missingSkillsCount = profile?.skills?.missing?.length || 0;
   const guidanceText = profile?.readinessScore?.breakdownReason ||
-    "You are progressing steadily toward your target position. Mastering critical framework fundamentals and completing 1-2 full-stack projects will significantly boost your candidate profile.";
+    "Your career analysis is active. Review your missing skills and practice interview questions to increase readiness.";
 
   return (
     <Card className="career-goal-card">

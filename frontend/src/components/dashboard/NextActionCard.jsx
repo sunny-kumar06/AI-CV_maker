@@ -7,23 +7,33 @@ import Icon from '../Icon';
 const NextActionCard = ({ skills, targetRole, prioritySkills }) => {
   const navigate = useNavigate();
 
-  // Extract real priority skills or missing skills if available
   const topPriorityObj = prioritySkills && prioritySkills.length > 0 ? prioritySkills[0] : null;
   const missingSkills = skills?.missing || [];
+  const matchedSkills = skills?.matched || [];
 
-  let actionTitle = 'Strengthen Core Technical Skills';
-  let whyReason = `Focus on addressing your primary skill gaps to increase compatibility with target engineering roles.`;
-  let impactLevel = 'High';
-  let recommendedEffort = '3–5 days';
+  const isAnalyzed = Boolean(topPriorityObj || missingSkills.length > 0 || matchedSkills.length > 0);
+
+  let actionTitle = 'Upload Your Resume';
+  let whyReason = 'Upload your resume to unlock AI-powered skill gap evaluation, personalized career roadmap, and job recommendations.';
+  let impactLevel = 'High Priority';
+  let recommendedEffort = '1-2 mins';
+  let btnText = 'Upload Resume';
+  let targetPath = '/advisor';
 
   if (topPriorityObj) {
     actionTitle = `Master ${topPriorityObj.skill}`;
     if (topPriorityObj.reason) whyReason = topPriorityObj.reason;
     if (topPriorityObj.priority) impactLevel = topPriorityObj.priority === 'HIGH' ? 'High Impact' : 'Medium Impact';
+    recommendedEffort = '3–5 days';
+    btnText = 'View Skill Gap Analysis';
+    targetPath = '/skill-gap';
   } else if (missingSkills.length > 0) {
     const topGaps = missingSkills.slice(0, 2).join(' and ');
     actionTitle = `Strengthen ${topGaps}`;
     whyReason = `${topGaps} are critical skill gaps for your target ${targetRole || 'Software Engineer'} role.`;
+    recommendedEffort = '3–5 days';
+    btnText = 'View Skill Gap Analysis';
+    targetPath = '/skill-gap';
   }
 
   return (
@@ -60,13 +70,13 @@ const NextActionCard = ({ skills, targetRole, prioritySkills }) => {
 
         <div className="next-action-btn-wrap">
           <Button
-            variant="ghost"
+            variant={isAnalyzed ? "ghost" : "primary"}
             size="sm"
             icon="arrowRight"
             iconPosition="right"
-            onClick={() => navigate('/skill-gap')}
+            onClick={() => navigate(targetPath)}
           >
-            View Skill Gap Analysis
+            {btnText}
           </Button>
         </div>
       </div>

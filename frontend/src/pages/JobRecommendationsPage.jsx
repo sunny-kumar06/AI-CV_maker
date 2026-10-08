@@ -1,57 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import PageHeader from '../components/ui/PageHeader';
 import { Card, Badge } from '../components/ui/Card';
+import Button from '../components/ui/Button';
+import Icon from '../components/Icon';
 import { LoadingState } from '../components/ui/StateViews';
-import { getCareerProfile } from '../features/career/services/career.api';
+import { useCareerProfile } from '../context/career.context';
 
 const JobRecommendationsPage = () => {
-  const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { profile, loading, hasProfile } = useCareerProfile();
 
-  useEffect(() => {
-    getCareerProfile()
-      .then(res => {
-        if (res.careerProfile) setProfile(res.careerProfile);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const roles = profile?.recommendedRoles || [
-    {
-      roleTitle: 'Full Stack Developer',
-      matchPercentage: 86,
-      matchingSkills: ['React.js', 'Node.js', 'MongoDB', 'Express', 'JavaScript'],
-      missingSkills: ['Docker', 'AWS'],
-      whySuited: 'Your experience in both frontend React UIs and backend Express REST APIs makes you a strong match for Full Stack roles.',
-      requiredToReady: ['Containerization with Docker', 'Production Deployment']
-    },
-    {
-      roleTitle: 'Backend Engineer',
-      matchPercentage: 79,
-      matchingSkills: ['Node.js', 'Express', 'REST APIs', 'MongoDB', 'Database Indexing'],
-      missingSkills: ['Redis Caching', 'System Design'],
-      whySuited: 'Solid foundation in server-side API design and MongoDB database schema management.',
-      requiredToReady: ['Advanced Caching Patterns', 'System Design Basics']
-    },
-    {
-      roleTitle: 'Software Engineer',
-      matchPercentage: 74,
-      matchingSkills: ['JavaScript', 'Data Structures', 'Git', 'Problem Solving'],
-      missingSkills: ['Unit Testing', 'CI/CD Pipelines'],
-      whySuited: 'Strong foundational programming skills and software development lifecycle knowledge.',
-      requiredToReady: ['Automated Unit Testing', 'CI/CD Automation']
-    },
-    {
-      roleTitle: 'Frontend Developer',
-      matchPercentage: 71,
-      matchingSkills: ['React.js', 'HTML/CSS', 'JavaScript'],
-      missingSkills: ['TypeScript', 'State Management'],
-      whySuited: 'Capable of building modern, responsive component UIs.',
-      requiredToReady: ['TypeScript Integration', 'UI Performance Tuning']
-    }
-  ];
+  const roles = profile?.recommendedRoles || [];
 
   return (
     <div className="app-layout">
@@ -65,6 +26,29 @@ const JobRecommendationsPage = () => {
 
         {loading ? (
           <LoadingState title="Calculating Best Job Role Matches..." message="Evaluating your profile against industry roles." />
+        ) : !hasProfile || roles.length === 0 ? (
+          <Card style={{ padding: '48px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--color-light-indigo)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontSize: '28px' }}>
+              <Icon name="jobMatch" />
+            </div>
+            <div>
+              <h2 style={{ fontSize: '22px', fontWeight: '800', color: 'var(--text-primary)', marginBottom: '8px' }}>
+                Personalized Job Matches
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '480px', margin: '0 auto', lineHeight: '1.5' }}>
+                Complete your career analysis to receive job recommendations based on your skills and target role.
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              icon="sparkles"
+              onClick={() => navigate('/advisor')}
+              style={{ marginTop: '8px' }}
+            >
+              Complete Career Analysis
+            </Button>
+          </Card>
         ) : (
           <div className="grid-cols-2">
             {roles.map((role, idx) => (
@@ -104,7 +88,7 @@ const JobRecommendationsPage = () => {
                   </div>
                 </div>
 
-                {role.requiredToReady && (
+                {role.requiredToReady && role.requiredToReady.length > 0 && (
                   <div style={{ background: 'var(--color-light-indigo)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '12px', color: 'var(--accent-primary)' }}>
                     🎯 <strong style={{ color: 'var(--text-primary)' }}>To Become 100% Job Ready:</strong> {(role.requiredToReady || []).join(', ')}
                   </div>

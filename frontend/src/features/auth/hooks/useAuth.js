@@ -10,17 +10,12 @@ export const useAuth = () => {
     const handleLogin = async (formData) => {
         try {
             setLoading(true);
-
-            const data = await login(formData);   // ✅ FIXED
-
-            console.log("LOGIN RESPONSE:", data);
-
+            const data = await login(formData);
             setUser(data.user);
-
             return data;
         } catch (error) {
-            console.error(error);
-            return null;
+            console.error("Login error:", error);
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -30,15 +25,12 @@ export const useAuth = () => {
     const handleRegister = async (formData) => {
         try {
             setLoading(true);
-
-            const data = await register(formData);  // ✅ FIXED
-
+            const data = await register(formData);
             setUser(data.user);
-
             return data;
         } catch (error) {
-            console.error(error);
-            return null;
+            console.error("Register error:", error);
+            throw error;
         } finally {
             setLoading(false);
         }

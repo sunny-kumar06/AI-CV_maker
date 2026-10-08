@@ -12,13 +12,21 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const { loading, handleRegister } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleRegister({ username, email, password });
-    navigate("/");
+    setError("");
+    try {
+      const res = await handleRegister({ username, email, password });
+      if (res) {
+        navigate("/");
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Registration failed. Please try again.");
+    }
   };
 
   return (
@@ -31,6 +39,8 @@ const Register = () => {
           <h2 className="auth-title">Create your CareerAI Account</h2>
           <p className="auth-subtitle">Join candidates building personalized AI career roadmaps.</p>
         </div>
+
+        {error && <div className="auth-error-banner">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <Input

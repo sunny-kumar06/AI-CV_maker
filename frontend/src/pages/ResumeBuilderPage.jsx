@@ -7,11 +7,14 @@ import { Input, Textarea } from '../components/ui/Input';
 import FileUpload from '../components/ui/FileUpload';
 import { LoadingState, ErrorState } from '../components/ui/StateViews';
 import { analyzeResume } from '../features/resume/services/resume.api';
+import { useCareerProfile } from '../context/career.context';
 
 const ResumeBuilderPage = () => {
-  const [resumeText, setResumeText] = useState('');
+  const { profile, hasProfile } = useCareerProfile();
+
+  const [resumeText, setResumeText] = useState(profile?.resumeText || '');
   const [resumeFile, setResumeFile] = useState(null);
-  const [targetRole, setTargetRole] = useState('Software Engineer');
+  const [targetRole, setTargetRole] = useState(profile?.targetRole || 'Software Engineer');
 
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -46,6 +49,20 @@ const ResumeBuilderPage = () => {
           title="AI Resume Improver"
           description="Optimize resume wording, bullet point impacts, and ATS keyword matching based on your real experience."
         />
+
+        {!hasProfile && (
+          <div style={{ background: 'var(--color-light-indigo)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{ fontSize: '24px' }}>📄</span>
+            <div>
+              <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--accent-primary)', marginBottom: '2px' }}>
+                Upload Your Existing Resume
+              </h4>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                Upload your existing resume to let CareerAI understand your profile and generate tailored ATS improvements.
+              </p>
+            </div>
+          </div>
+        )}
 
         <Card elevated style={{ marginBottom: '32px' }}>
           <form onSubmit={handleImproveResume}>
@@ -109,10 +126,10 @@ const ResumeBuilderPage = () => {
                   <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Evaluation against standard applicant tracking systems for {targetRole}.</p>
                 </div>
                 <div style={{ fontSize: '32px', fontWeight: '800', color: 'var(--color-success)' }}>
-                  {result.atsScore || 78}% ATS Score
+                  {result.atsScore || 0}% ATS Score
                 </div>
               </div>
-              <ProgressBar value={result.atsScore || 78} color="var(--color-success)" height={8} />
+              <ProgressBar value={result.atsScore || 0} color="var(--color-success)" height={8} />
 
               <div style={{ marginTop: '20px' }}>
                 <h4 style={{ fontSize: '13px', color: 'var(--accent-primary)', fontWeight: '600', marginBottom: '8px' }}>Key Profile Strengths</h4>

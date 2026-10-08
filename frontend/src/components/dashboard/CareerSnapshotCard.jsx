@@ -2,11 +2,12 @@ import React from 'react';
 import { Card } from '../ui/Card';
 
 const CareerSnapshotCard = ({ profile }) => {
-  const targetRole = profile?.targetRole || 'Full Stack Developer';
-  const experienceLevel = profile?.roadmap?.currentLevel || profile?.experienceLevel || 'Junior';
-  const matchedCount = profile?.skills?.matched?.length || 5;
-  const gapCount = profile?.skills?.missing?.length || 4;
-  const statusText = 'Improving';
+  const isAnalyzed = Boolean(profile && profile.readinessScore?.overall > 0);
+  const targetRole = isAnalyzed ? (profile?.targetRole || 'Software Engineer') : 'Not Set';
+  const experienceLevel = isAnalyzed ? (profile?.roadmap?.currentLevel || 'Intermediate') : 'Not Assessed';
+  const matchedCount = isAnalyzed ? (profile?.skills?.matched?.length || 0) : 0;
+  const gapCount = isAnalyzed ? (profile?.skills?.missing?.length || 0) : 0;
+  const statusText = isAnalyzed ? 'Active Profile' : 'Pending Analysis';
 
   return (
     <Card className="career-snapshot-card">
@@ -26,11 +27,11 @@ const CareerSnapshotCard = ({ profile }) => {
         </div>
         <div className="snapshot-item">
           <span className="item-label">Skills Matched</span>
-          <span className="item-value text-success">{matchedCount}</span>
+          <span className="item-value text-success">{isAnalyzed ? matchedCount : '--'}</span>
         </div>
         <div className="snapshot-item">
           <span className="item-label">Critical Gaps</span>
-          <span className="item-value text-danger">{gapCount}</span>
+          <span className="item-value text-danger">{isAnalyzed ? gapCount : '--'}</span>
         </div>
       </div>
     </Card>
