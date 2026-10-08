@@ -54,6 +54,7 @@ async function registerUserController(req, res) {
 
     return res.status(201).json({
         message: "User registered successfully",
+        token,
         user: {
             id: user._id,
             username: user.username,
@@ -150,20 +151,20 @@ async function loginUserController(req, res) {
 
         console.log("STEP 7: token generated");
 
-        const isProd = true; // 🔥 since deployed
+        const isProd = process.env.NODE_ENV === "production";
 
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,      // 🔥 LOCALHOST के लिए
-            sameSite: "None",
+            secure: isProd,
+            sameSite: isProd ? "None" : "lax",
             path: "/"
-
         });
 
         console.log("STEP 8: cookie set");
 
         return res.status(200).json({
             message: "User logged in successfully",
+            token,
             user: {
                 id: user._id,
                 username: user.username,

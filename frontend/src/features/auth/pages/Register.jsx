@@ -1,61 +1,82 @@
-import React, { useState } from 'react'
-import '../auth.form.scss'
-import { useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import Icon from '../../../components/Icon';
+import Button from '../../../components/ui/Button';
+import { Input } from '../../../components/ui/Input';
+import '../auth.form.scss';
 
 const Register = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [username, setUsername] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const { loading, handleRegister } = useAuth()
+  const { loading, handleRegister } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    await handleRegister({ username, email, password })
-    navigate("/")
-  }
+    e.preventDefault();
+    await handleRegister({ username, email, password });
+    navigate("/");
+  };
 
-  if (loading) {
-    return (
-      <main>
-        <p>Registering...</p>
-      </main>
-    )
-  }
   return (
-    <main>
-      <div className="form-container">
-        <h2>Register</h2>
+    <div className="auth-page-container">
+      <div className="auth-card-panel">
+        <div className="auth-brand-head">
+          <div className="brand-icon-box">
+            <Icon name="target" />
+          </div>
+          <h2 className="auth-title">Create your CareerAI Account</h2>
+          <p className="auth-subtitle">Join candidates building personalized AI career roadmaps.</p>
+        </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Username</label>
-            <input type="text" placeholder="Enter username" value={username} onChange={(e) => setUsername(e.target.value)} />
-          </div>
+          <Input
+            label="Username"
+            id="regUsername"
+            type="text"
+            placeholder="Enter username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
 
-          <div className="input-group">
-            <label>Email</label>
-            <input type="email" placeholder="Enter email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          </div>
+          <Input
+            label="Email Address"
+            id="regEmail"
+            type="email"
+            placeholder="Enter email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-          <div className="input-group">
-            <label>Password</label>
-            <input type="password" placeholder="Enter password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          </div>
+          <Input
+            label="Password"
+            id="regPassword"
+            type="password"
+            placeholder="Create a secure password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-          <button className="button primary-button" disabled={loading}>
-            {loading ? "Registering..." : "Register"}
-          </button>
+          <Button type="submit" variant="primary" fullWidth loading={loading}>
+            Create Account
+          </Button>
         </form>
-        <p className="switch-text">
-          Already have an account? <span className="link" onClick={() => navigate("/login")}>Login</span>
+
+        <p className="auth-switch-prompt">
+          Already have an account?
+          <span className="auth-link" onClick={() => navigate("/login")}>
+            Sign In
+          </span>
         </p>
       </div>
-    </main>
-  )
-}
+    </div>
+  );
+};
 
-export default Register
+export default Register;

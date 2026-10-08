@@ -1,24 +1,20 @@
-
-import { useAuth } from '../hooks/useAuth'
-import { Navigate } from 'react-router-dom'
-import React from 'react'
+import React from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+import CareerAILoader from '../../../components/CareerAILoader';
 
 function Protected({ children }) {
-    const { loading, user } = useAuth()
+    const { loading, user } = useAuth();
 
     if (loading) {
-        return <div>Loading...</div>
+        return <CareerAILoader text="Preparing your career workspace..." />;
     }
 
     if (!user) {
-        return <Navigate to="/login" replace />
+        return <Navigate to="/login" replace />;
     }
 
-    return (
-        <div>
-            {children}
-        </div>
-    )
+    return children;
 }
 
-export default Protected
+export default Protected;

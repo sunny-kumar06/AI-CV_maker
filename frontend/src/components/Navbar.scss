@@ -1,0 +1,349 @@
+/* ====================================================
+   CAREERAI - PREMIUM VERTICAL GLASS SIDEBAR SCSS
+   ==================================================== */
+
+/* 1. DESKTOP FIXED GLASS SIDEBAR (> 1024px) */
+.glass-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  height: 100vh;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1), background-color 200ms ease, border-color 200ms ease;
+
+  /* Custom Scrollbar for Sidebar */
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+  }
+
+  /* BRAND SECTION AT TOP */
+  .sidebar-brand-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 8px 20px 8px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 16px;
+
+    .logo-icon-box {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+      flex-shrink: 0;
+
+      .svg-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+
+      .brand-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1.2;
+        letter-spacing: -0.3px;
+      }
+
+      .brand-subtitle {
+        font-size: 11.5px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+    }
+  }
+
+  /* MAIN NAVIGATION LIST */
+  .sidebar-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+
+    .nav-section-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      padding: 8px 12px 4px 12px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      box-sizing: border-box;
+      border: 1px solid transparent;
+
+      .svg-icon {
+        display: flex;
+        align-items: center;
+        color: var(--text-secondary);
+        transition: color var(--transition-fast);
+      }
+
+      &:hover {
+        color: var(--text-primary);
+        background: var(--bg-elevated);
+        text-decoration: none;
+
+        .svg-icon {
+          color: var(--text-primary);
+        }
+      }
+
+      &.active {
+        font-weight: 600;
+        text-decoration: none;
+      }
+    }
+  }
+
+  /* FOOTER SECTION AT BOTTOM */
+  .sidebar-footer-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 16px;
+
+    .sidebar-utility-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4px;
+
+      .utility-label {
+        font-size: 12.5px;
+        font-weight: 500;
+        color: var(--text-muted);
+      }
+    }
+
+    .sidebar-user-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+
+      .user-avatar {
+        width: 34px;
+        height: 34px;
+        background: var(--accent-primary);
+        color: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .user-info-text {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        .user-name {
+          font-size: 13.5px;
+          font-weight: 600;
+          color: var(--text-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .user-role-tag {
+          font-size: 11px;
+          color: var(--text-muted);
+        }
+      }
+    }
+
+    .sidebar-logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 40px;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 13.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+
+      .svg-icon {
+        display: flex;
+        align-items: center;
+      }
+
+      &:hover {
+        background: var(--color-danger-bg);
+        border-color: var(--color-danger-border);
+        color: var(--color-danger);
+      }
+    }
+  }
+}
+
+/* Light & Dark Theme Overrides for Sidebar */
+[data-theme="dark"] .glass-sidebar {
+  background: rgba(10, 15, 30, 0.68);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border-right: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 10px 0 40px rgba(0, 0, 0, 0.35);
+
+  .sidebar-nav-list .sidebar-nav-item.active {
+    background: rgba(99, 102, 241, 0.16);
+    border: 1px solid rgba(129, 140, 248, 0.24);
+    color: #818CF8;
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.12);
+
+    .svg-icon {
+      color: #818CF8;
+    }
+  }
+}
+
+[data-theme="light"] .glass-sidebar {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  border-right: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 10px 0 30px rgba(15, 23, 42, 0.05);
+
+  .sidebar-nav-list .sidebar-nav-item.active {
+    background: rgba(238, 242, 255, 0.9);
+    border: 1px solid rgba(79, 70, 229, 0.22);
+    color: #4F46E5;
+    box-shadow: 0 2px 10px rgba(79, 70, 229, 0.1);
+
+    .svg-icon {
+      color: #4F46E5;
+    }
+  }
+}
+
+/* 2. MOBILE HEADER BAR & OVERLAY DRAWER (<= 1024px) */
+.mobile-header-bar {
+  display: none;
+}
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .mobile-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 990;
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+
+      .logo-icon-box {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+      }
+
+      .brand-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .brand-subtitle {
+        font-size: 11px;
+        color: var(--text-muted);
+      }
+    }
+
+    .mobile-hamburger-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: var(--radius-sm);
+    }
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+  }
+
+  .glass-sidebar {
+    transform: translateX(-100%);
+    z-index: 999;
+
+    &.mobile-open {
+      transform: translateX(0);
+    }
+  }
+}
