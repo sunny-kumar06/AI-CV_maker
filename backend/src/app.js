@@ -17,7 +17,10 @@ app.use(cors({
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.some(o => origin.startsWith(o))) {
+        const isExactMatch = allowedOrigins.some(o => origin.startsWith(o));
+        const isVercelDomain = /\.vercel\.app$/.test(new URL(origin).hostname);
+
+        if (isExactMatch || isVercelDomain) {
             return callback(null, true);
         } else {
             console.log("❌ BLOCKED ORIGIN:", origin);

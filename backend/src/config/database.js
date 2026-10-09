@@ -7,7 +7,9 @@ const connectDB = async () => {
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000 // Fast fail in 5s if MongoDB Atlas is unreachable
+    });
     const dbName = conn.connection.name || 'CareerAI';
     console.log(`✅ MongoDB connected successfully`);
     console.log(`   Database: ${dbName}`);

@@ -8,22 +8,31 @@ import '../auth.form.scss';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { loading, handleLogin } = useAuth();
+  const { handleLogin } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+
     setError("");
+    setSubmitting(true);
+
     try {
       const res = await handleLogin({ email, password });
       if (res) {
         navigate("/");
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to log in. Please check your credentials.");
+      console.error("Login attempt failed:", err);
+      const msg = err.customMessage || err.response?.data?.message || err.message || "Failed to log in. Please check your credentials.";
+      setError(msg);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -48,6 +57,7 @@ const Login = () => {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={submitting}
             required
           />
 
@@ -58,17 +68,18 @@ const Login = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            disabled={submitting}
             required
           />
 
-          <Button type="submit" variant="primary" fullWidth loading={loading}>
-            Sign In
+          <Button type="submit" variant="primary" fullWidth loading={submitting} disabled={submitting}>
+            {submitting ? "Signing In..." : "Sign In"}
           </Button>
         </form>
 
         <p className="auth-switch-prompt">
           Don't have an account?
-          <span className="auth-link" onClick={() => navigate("/register")}>
+          <span className="auth-link" onClick={() => !submitting && navigate("/register")}>
             Register here
           </span>
         </p>

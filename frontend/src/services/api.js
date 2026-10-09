@@ -21,7 +21,8 @@ const API_BASE_URL = getBaseUrl();
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true
+  withCredentials: true,
+  timeout: 20000 // 20 seconds timeout for Render cold-starts & network resiliency
 });
 
 // Interceptor to attach JWT token from localStorage if available
@@ -34,6 +35,19 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response Interceptor for user-friendly error formatting & timeout handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === 'ECONNABORTED' || (error.message && error.message.toLowerCase().includes('timeout'))) {
+      error.customMessage = "Server is starting or taking longer to respond. Please try again in a few seconds.";
+    } else if (error.message === 'Network Error' || error.code === 'ERR_NETWORK') {
+      error.customMessage = "Network error. Please check your connection or try again shortly.";
+    }
     return Promise.reject(error);
   }
 );
